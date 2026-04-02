@@ -1,0 +1,8 @@
+# Generated PR review files (live under each workspace repo, not here)
+workspace/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log

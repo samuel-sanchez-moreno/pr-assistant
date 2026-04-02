@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+# pii-sanitize — shared PII-filtering engine for CLI wrapper scripts.
+#
+# Invokes a CLI tool, then strips personally identifiable information from the
+# output before it reaches the caller (and ultimately the LLM context window).
+#
+# This script is NOT called directly by users. Each skill provides a thin
+# wrapper (e.g. gh-sanitize, bkt-sanitize) that sets PII_FIELDS_FILE and
+# calls this engine.
+#
+# Supports two output modes:
+#   • JSON  — detected automatically when output starts with [ or {.
+#             Uses jq to recursively delete known PII fields.
+#   • Plain — applies sed-based regex redaction for emails and identity trailers.
+#
+# Usage (from a wrapper script):
+#   export PII_FIELDS_FILE="/path/to/pii-fields.json"
+#   source /path/to/pii-sanitize
+#   pii_sanitize_run <cli-command> [--strict] [cli-args...]
+#
+# Or as a standalone:
+#   ./pii-sanitize <cli-command> [--strict] [cli-args...]
+#
+# Requirements: jq (for JSON mode), sed, grep
+# Portable: macOS + Linux (POSIX-compatible sed patterns)
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Resolve PII fields config — set by wrapper or default to sibling file
+# ---------------------------------------------------------------------------
+if [[ -z "${PII_FIELDS_FILE:-}" ]]; then
+  _SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  PII_FIELDS_FILE="$_SELF_DIR/pii-fields.json"
+fi
+
+# ---------------------------------------------------------------------------
+# Build jq filter from pii-fields.json
+# ---------------------------------------------------------------------------
+build_jq_filter() {
+  local fields_file="${1:-$PII_FIELDS_FILE}"
+
+  if [[ ! -f "$fields_file" ]]; then
+    echo "WARNING: PII fields file not found at $fields_file — using passthrough." >&2
+    echo "."
+    return
+  fi
+
+  python3 -c "
+import json, sys
+
+with open('$fields_file') as f:
+    cfg = json.load(f)
+
+obj_keys = cfg.get('object_keys', [])
+key_patterns = cfg.get('key_patterns', [])
+
+parts = []
+
+if obj_keys:
+    deletes = ', '.join(f'.{k}?' for k in obj_keys)
+    parts.append(f'del({deletes})')
+
+if key_patterns:
+    pattern = '|'.join(key_patterns)
+    parts.append(
+        f'with_entries(select(.key | test(\"(?i){pattern}\") | not))'
+    )
+
+jq_body = ' | '.join(parts) if parts else '.'
+print(f'walk(if type == \"object\" then {jq_body} else . end)')
+" 2>/dev/null || {
+    echo "WARNING: Failed to build jq filter from $fields_file — using passthrough." >&2
+    echo "."
+  }
+}
+
+# ---------------------------------------------------------------------------
+# Regex-based PII scrubbing (plain text + safety net)
+# ---------------------------------------------------------------------------
+scrub_pii_regex() {
+  sed \
+    -e 's/[A-Za-z0-9._%+!#$&*\/=?^`{|}~-]*@[A-Za-z0-9.-]*\.[A-Za-z]\{2,\}/[REDACTED_EMAIL]/g' \
+    -e 's/Co-authored-by:.*/Co-authored-by: [REDACTED]/g' \
+    -e 's/Signed-off-by:.*/Signed-off-by: [REDACTED]/g' \
+    -e 's/Reviewed-by:.*/Reviewed-by: [REDACTED]/g' \
+    -e 's/Acked-by:.*/Acked-by: [REDACTED]/g' \
+    -e 's/Reported-by:.*/Reported-by: [REDACTED]/g' \
+    -e 's/Tested-by:.*/Tested-by: [REDACTED]/g'
+}
+
+# ---------------------------------------------------------------------------
+# Strict-mode residual PII check
+# ---------------------------------------------------------------------------
+check_residual_pii() {
+  local output="$1"
+  local cli_name="${2:-cli}"
+  if echo "$output" | grep -qEi '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'; then
+    echo "ERROR [${cli_name}-sanitize --strict]: Residual email address detected in output. Blocking." >&2
+    echo "[OUTPUT BLOCKED — residual PII detected. Re-run with explicit --json field selection to avoid PII fields.]"
+    return 1
+  fi
+  return 0
+}
+
+# ---------------------------------------------------------------------------
+# Main entry point — can be called as a function or run standalone
+# ---------------------------------------------------------------------------
+pii_sanitize_run() {
+  local cli_cmd="$1"
+  shift
+
+  # Parse --strict flag (must be first arg after cli_cmd)
+  local strict="${PII_SANITIZE_STRICT:-0}"
+  local -a cli_args=("$@")
+  if [[ ${#cli_args[@]} -gt 0 && "${cli_args[0]}" == "--strict" ]]; then
+    strict=1
+    cli_args=("${cli_args[@]:1}")
+  fi
+
+  # Validate CLI is installed
+  if ! command -v "$cli_cmd" &>/dev/null; then
+    echo "ERROR: $cli_cmd is not installed." >&2
+    exit 1
+  fi
+
+  # Check jq availability
+  local jq_available=0
+  if command -v jq &>/dev/null; then
+    jq_available=1
+  else
+    echo "WARNING: jq is not installed. JSON PII filtering will be limited to regex." >&2
+  fi
+
+  # Capture CLI output
+  local raw_output
+  raw_output="$("$cli_cmd" "${cli_args[@]}" 2>&1)" || {
+    local exit_code=$?
+    echo "$raw_output" >&2
+    exit $exit_code
+  }
+
+  # Detect JSON output
+  local is_json=0
+  local trimmed
+  trimmed="$(echo "$raw_output" | head -c 1)"
+  if [[ "$trimmed" == "[" || "$trimmed" == "{" ]]; then
+    is_json=1
+  fi
+
+  local filtered
+  if [[ $is_json -eq 1 && $jq_available -eq 1 ]]; then
+    # JSON mode: jq-based PII removal + regex safety net
+    local jq_filter
+    jq_filter="$(build_jq_filter "$PII_FIELDS_FILE")"
+    filtered="$(echo "$raw_output" | jq "$jq_filter" 2>/dev/null)" || {
+      echo "WARNING: jq PII filter failed — falling back to regex scrubbing." >&2
+      filtered="$(echo "$raw_output" | scrub_pii_regex)"
+    }
+    filtered="$(echo "$filtered" | scrub_pii_regex)"
+  else
+    # Plain text mode: regex only
+    filtered="$(echo "$raw_output" | scrub_pii_regex)"
+  fi
+
+  # Strict mode check
+  if [[ "$strict" == "1" ]]; then
+    if ! check_residual_pii "$filtered" "$cli_cmd"; then
+      exit 1
+    fi
+  fi
+
+  echo "$filtered"
+}
+
+# ---------------------------------------------------------------------------
+# Standalone mode — if executed directly (not sourced)
+# ---------------------------------------------------------------------------
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: pii-sanitize <cli-command> [--strict] [cli-args...]" >&2
+    exit 1
+  fi
+  pii_sanitize_run "$@"
+fi

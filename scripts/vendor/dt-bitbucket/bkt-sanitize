@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# bkt-sanitize — PII-filtering wrapper around the Bitbucket CLI (bkt).
+#
+# Thin wrapper that delegates to the shared pii-sanitize engine
+# (utils/dt-pii-sanitize) with Bitbucket-specific PII field configuration.
+#
+# Usage:
+#   ./bkt-sanitize <any bkt arguments>
+#   ./bkt-sanitize --strict <any bkt arguments>
+#
+# Environment:
+#   BKT_SANITIZE_STRICT=1   — same as --strict flag
+#   BKT_SANITIZE_FIELDS     — path to custom pii-fields.json
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Point the shared engine at this skill's PII fields config
+export PII_FIELDS_FILE="${BKT_SANITIZE_FIELDS:-$SCRIPT_DIR/pii-fields.json}"
+export PII_SANITIZE_STRICT="${BKT_SANITIZE_STRICT:-0}"
+
+# Resolve the shared engine: check utils/ (assembled plugin), then top-level utils/
+ENGINE=""
+for candidate in \
+  "$SCRIPT_DIR/../dt-pii-sanitize/pii-sanitize"; do
+  if [[ -x "$candidate" ]]; then
+    ENGINE="$(cd "$(dirname "$candidate")" && pwd)/$(basename "$candidate")"
+    break
+  fi
+done
+
+if [[ -z "$ENGINE" ]]; then
+  echo "ERROR: pii-sanitize engine not found. Ensure utils/dt-pii-sanitize is available." >&2
+  exit 1
+fi
+
+exec "$ENGINE" bkt "$@"

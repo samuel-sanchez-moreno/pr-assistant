@@ -1,0 +1,43 @@
+{
+  "_comment": "PII field blocklist for bkt-sanitize. Fields listed here are recursively removed from Bitbucket API JSON output before it reaches the LLM.",
+
+  "object_keys": [
+    "author",
+    "user",
+    "owner",
+    "creator",
+    "assignee",
+    "reporter",
+    "reviewer",
+    "reviewers",
+    "participants",
+    "closed_by",
+    "updated_by",
+    "approved_by"
+  ],
+
+  "nested_paths": [
+    "pull_request.author",
+    "pull_request.closed_by",
+    "pull_request.reviewers",
+    "pull_request.participants",
+    "repository.owner",
+    "commit.author",
+    "commit.committer",
+    "issue.assignee",
+    "issue.reporter"
+  ],
+
+  "key_patterns": [
+    "email",
+    "login",
+    "username",
+    "display_name",
+    "displayName",
+    "nickname",
+    "avatar",
+    "avatar_url",
+    "account_id",
+    "uuid"
+  ]
+}
