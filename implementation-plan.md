@@ -67,12 +67,12 @@ template is used as fallback.
 - Create: `pr-assistant/.gitignore`
 - Create directories: `scripts/lib/`, `scripts/vendor/`, `prompts/`, `launchd/`, `tests/`
 
-- [ ] **Step 1: Initialize git repository**
+- [x] **Step 1: Initialize git repository**
 
   Run: `git init /Users/samuel.sanchez-moreno/workspace/pr-assistant`
   Expected: `Initialized empty Git repository` (or already initialized)
 
-- [ ] **Step 2: Create directory structure**
+- [x] **Step 2: Create directory structure**
 
   Run:
   ```bash
@@ -84,7 +84,7 @@ template is used as fallback.
   ```
   Expected: all directories created
 
-- [ ] **Step 3: Write `.gitignore`**
+- [x] **Step 3: Write `.gitignore`**
 
   Contents:
   ```
@@ -98,7 +98,7 @@ template is used as fallback.
   *.log
   ```
 
-- [ ] **Step 4: Verify layout**
+- [x] **Step 4: Verify layout**
 
   Run: `ls -R /Users/samuel.sanchez-moreno/workspace/pr-assistant`
   Expected: all directories visible
@@ -119,7 +119,7 @@ Source originals are at:
 - `rnd-ai-knowledgebase/skills/dt-bitbucket/scripts/pii-fields.json`
 - `rnd-ai-knowledgebase/utils/dt-pii-sanitize/pii-sanitize`
 
-- [ ] **Step 1: Create the vendor directories**
+- [x] **Step 1: Create the vendor directories**
 
   Run:
   ```bash
@@ -128,7 +128,7 @@ Source originals are at:
   ```
   Expected: directories created
 
-- [ ] **Step 2: Copy the sanitizer wrapper**
+- [x] **Step 2: Copy the sanitizer wrapper**
 
   Run:
   ```bash
@@ -137,7 +137,7 @@ Source originals are at:
   ```
   Expected: file copied
 
-- [ ] **Step 3: Copy the PII fields config**
+- [x] **Step 3: Copy the PII fields config**
 
   Run:
   ```bash
@@ -146,7 +146,7 @@ Source originals are at:
   ```
   Expected: file copied
 
-- [ ] **Step 4: Copy the sanitize engine**
+- [x] **Step 4: Copy the sanitize engine**
 
   Run:
   ```bash
@@ -155,7 +155,7 @@ Source originals are at:
   ```
   Expected: file copied
 
-- [ ] **Step 5: Update internal relative paths in the vendored wrapper**
+- [x] **Step 5: Update internal relative paths in the vendored wrapper**
 
   The original `bkt-sanitize` resolves the engine via two relative candidates:
   ```
@@ -169,7 +169,7 @@ Source originals are at:
   ```
   Verify: read the vendored file after editing and confirm the path is correct.
 
-- [ ] **Step 6: Set executable bits**
+- [x] **Step 6: Set executable bits**
 
   Run:
   ```bash
@@ -178,7 +178,7 @@ Source originals are at:
   ```
   Expected: bits set
 
-- [ ] **Step 7: Smoke-test the vendored wrapper**
+- [x] **Step 7: Smoke-test the vendored wrapper**
 
   Run:
   ```bash
@@ -243,14 +243,14 @@ fetch_unresolved_comments() {
 }
 ```
 
-- [ ] **Step 1: Create `pr-assistant/scripts/lib/` directory**
+- [x] **Step 1: Create `pr-assistant/scripts/lib/` directory**
 
   Run: `mkdir -p pr-assistant/scripts/lib`
   Expected: directory created (may already exist from Task 2)
 
-- [ ] **Step 2: Write `pr-assistant-bitbucket.sh`**
+- [x] **Step 2: Write `pr-assistant-bitbucket.sh`**
 
-- [ ] **Step 3: Verify `fetch_my_open_prs` outputs safe fields only**
+- [x] **Step 3: Verify `fetch_my_open_prs` outputs safe fields only**
 
   Run:
   ```bash
@@ -259,7 +259,7 @@ fetch_unresolved_comments() {
   ```
   Expected: JSON array with id, title, state, source, destination, repo, updated_on — no PII fields
 
-- [ ] **Step 4: Verify `fetch_unresolved_comments` for a known PR**
+- [x] **Step 4: Verify `fetch_unresolved_comments` for a known PR**
 
   Run: `fetch_unresolved_comments <repo> <pr_id>` against a live PR
   Expected: JSON array with id, state, updated_on, text, anchor — no author/user fields
@@ -330,9 +330,9 @@ compute_delta() {
 }
 ```
 
-- [ ] **Step 1: Write `pr-assistant-state.sh`**
+- [x] **Step 1: Write `pr-assistant-state.sh`**
 
-- [ ] **Step 2: Test `read_tracked_comments` on a nonexistent file**
+- [x] **Step 2: Test `read_tracked_comments` on a nonexistent file**
 
   Run:
   ```bash
@@ -341,7 +341,7 @@ compute_delta() {
   ```
   Expected: `[]`
 
-- [ ] **Step 3: Test `compute_delta` with identical stored and live comments**
+- [x] **Step 3: Test `compute_delta` with identical stored and live comments**
 
   Run:
   ```bash
@@ -351,7 +351,7 @@ compute_delta() {
   ```
   Expected: `unchanged`
 
-- [ ] **Step 4: Test `compute_delta` with a new comment in live**
+- [x] **Step 4: Test `compute_delta` with a new comment in live**
 
   Run:
   ```bash
@@ -361,7 +361,7 @@ compute_delta() {
   ```
   Expected: `changed`
 
-- [ ] **Step 5: Test `compute_delta` with an updated timestamp on an existing comment**
+- [x] **Step 5: Test `compute_delta` with an updated timestamp on an existing comment**
 
   Run:
   ```bash
@@ -551,13 +551,13 @@ Add a **Root Cause Analysis** section to your output, before the Approaches:
 - Do NOT propose a fix that passes the test but leaves the underlying cause in place.
 ```
 
-- [ ] **Step 1: Write `pr-assistant/prompts/analyze-comments.md`**
+- [x] **Step 1: Write `pr-assistant/prompts/analyze-comments.md`**
 
-- [ ] **Step 2: Write `pr-assistant/prompts/lens-licoco.md`**
+- [x] **Step 2: Write `pr-assistant/prompts/lens-licoco.md`**
 
-- [ ] **Step 3: Write `pr-assistant/prompts/lens-debugging.md`**
+- [x] **Step 3: Write `pr-assistant/prompts/lens-debugging.md`**
 
-- [ ] **Step 4: Verify all three files exist and are non-empty**
+- [x] **Step 4: Verify all three files exist and are non-empty**
 
   Run: `ls -lh pr-assistant/prompts/`
   Expected: three `.md` files with non-zero size
@@ -761,9 +761,9 @@ analyze_pr_comments() {
 }
 ```
 
-- [ ] **Step 1: Write `pr-assistant-analysis.sh`**
+- [x] **Step 1: Write `pr-assistant-analysis.sh`**
 
-- [ ] **Step 2: Verify `build_agent_prompt` substitutes variables correctly**
+- [x] **Step 2: Verify `build_agent_prompt` substitutes variables correctly**
 
   Run:
   ```bash
@@ -773,7 +773,7 @@ analyze_pr_comments() {
   ```
   Expected: prompt text with repo/PR metadata substituted; LiCoCo lens appended at end
 
-- [ ] **Step 3: Verify debugging lens triggers on a bug-like comment**
+- [x] **Step 3: Verify debugging lens triggers on a bug-like comment**
 
   Run:
   ```bash
@@ -782,7 +782,7 @@ analyze_pr_comments() {
   ```
   Expected: `1`
 
-- [ ] **Step 4: Verify fallback produces valid output when opencode is absent**
+- [x] **Step 4: Verify fallback produces valid output when opencode is absent**
 
   Run:
   ```bash
@@ -860,9 +860,9 @@ write_pr_md() {
 }
 ```
 
-- [ ] **Step 1: Write `pr-assistant-render.sh`**
+- [x] **Step 1: Write `pr-assistant-render.sh`**
 
-- [ ] **Step 2: Verify the rendered file has correct sections**
+- [x] **Step 2: Verify the rendered file has correct sections**
 
   Run:
   ```bash
@@ -873,7 +873,7 @@ write_pr_md() {
   ```
   Expected: PR metadata header with tracked-comments block, followed by comment analysis
 
-- [ ] **Step 3: Verify `write_pr_md` creates the file at the correct path**
+- [x] **Step 3: Verify `write_pr_md` creates the file at the correct path**
 
   Run:
   ```bash
@@ -939,9 +939,9 @@ notify_error() {
 }
 ```
 
-- [ ] **Step 1: Write `pr-assistant-notify.sh`**
+- [x] **Step 1: Write `pr-assistant-notify.sh`**
 
-- [ ] **Step 2: Test `notify_all_clear` manually**
+- [x] **Step 2: Test `notify_all_clear` manually**
 
   Run:
   ```bash
@@ -950,7 +950,7 @@ notify_error() {
   ```
   Expected: macOS notification appears with title `PR Review Assistant` and message `Pull Requests all up to date`
 
-- [ ] **Step 3: Test `notify_pr_changed` with a real markdown file path**
+- [x] **Step 3: Test `notify_pr_changed` with a real markdown file path**
 
   Run:
   ```bash
@@ -1057,24 +1057,24 @@ fi
 echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ==="
 ```
 
-- [ ] **Step 1: Write `pr-review-login-check.sh`**
+- [x] **Step 1: Write `pr-review-login-check.sh`**
 
-- [ ] **Step 2: Make it executable**
+- [x] **Step 2: Make it executable**
 
   Run: `chmod +x pr-assistant/scripts/pr-review-login-check.sh`
   Expected: executable bit set
 
-- [ ] **Step 3: Run manually with no live auth issues expected**
+- [x] **Step 3: Run manually with no live auth issues expected**
 
   Run: `bash pr-assistant/scripts/pr-review-login-check.sh`
   Expected: script completes, output in `~/Library/Logs/pr-assistant.log`
 
-- [ ] **Step 4: Verify unchanged PRs are skipped and produce no notification**
+- [x] **Step 4: Verify unchanged PRs are skipped and produce no notification**
 
   Precondition: run once so `.prs/<pr>.md` is written. Run again.
   Expected: log shows "no new comments — skipping" for existing PRs
 
-- [ ] **Step 5: Verify changed PR triggers agent and produces notification**
+- [x] **Step 5: Verify changed PR triggers agent and produces notification**
 
   Precondition: delete one `.prs/<pr>.md` file or update a stored timestamp to an older value.
   Run the script again.
@@ -1124,19 +1124,19 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
 </plist>
 ```
 
-- [ ] **Step 1: Create `pr-assistant/launchd/` directory**
+- [x] **Step 1: Create `pr-assistant/launchd/` directory**
 
   Run: `mkdir -p pr-assistant/launchd`
   Expected: directory created (may already exist from Task 2)
 
-- [ ] **Step 2: Write `com.samuel.pr-assistant.plist`**
+- [x] **Step 2: Write `com.samuel.pr-assistant.plist`**
 
-- [ ] **Step 3: Validate plist syntax**
+- [x] **Step 3: Validate plist syntax**
 
   Run: `plutil -lint pr-assistant/launchd/com.samuel.pr-assistant.plist`
   Expected: `pr-assistant/launchd/com.samuel.pr-assistant.plist: OK`
 
-- [ ] **Step 4: Symlink the plist to `~/Library/LaunchAgents/`**
+- [x] **Step 4: Symlink the plist to `~/Library/LaunchAgents/`**
 
   Run:
   ```bash
@@ -1145,7 +1145,7 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
   ```
   Expected: symlink created
 
-- [ ] **Step 5: Load the agent without rebooting**
+- [x] **Step 5: Load the agent without rebooting**
 
   Run:
   ```bash
@@ -1158,7 +1158,7 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
 **Files:**
 - Create: `pr-assistant/README.md`
 
-- [ ] **Step 1: Write `README.md` with these sections:**
+- [x] **Step 1: Write `README.md` with these sections:**
   - Prerequisites (bkt, jq, terminal-notifier, opencode)
   - Setup (clone, vendor check, LaunchAgent installation)
   - Manual run instructions
@@ -1173,32 +1173,32 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
 
 ### Task 13: Manual end-to-end verification
 
-- [ ] **Step 1: Run the main script manually with live Bitbucket auth**
+- [x] **Step 1: Run the main script manually with live Bitbucket auth**
 
   Run: `bash pr-assistant/scripts/pr-review-login-check.sh`
   Expected: log shows full run, PRs fetched, repos matched or skipped
 
-- [ ] **Step 2: Verify generated files under real repo `.prs/` directories**
+- [x] **Step 2: Verify generated files under real repo `.prs/` directories**
 
   Run: `ls workspace/<repo>/.prs/` and read the generated file
   Expected: valid markdown with metadata header, tracked-comments block, and agent analysis per comment
 
-- [ ] **Step 3: Verify unchanged PRs are skipped on second run**
+- [x] **Step 3: Verify unchanged PRs are skipped on second run**
 
   Run: script again without modifying any stored state
   Expected: log shows all PRs as "no new comments — skipping", no notifications, all-clear fires
 
-- [ ] **Step 4: Verify changed PR triggers agent analysis and produces notification**
+- [x] **Step 4: Verify changed PR triggers agent analysis and produces notification**
 
   Run: remove or modify a `.prs/*.md` file, run the script again
   Expected: log shows "running agent analysis", notification fires with `Open review`, file rewritten
 
-- [ ] **Step 5: Verify the notification action opens the correct markdown file**
+- [x] **Step 5: Verify the notification action opens the correct markdown file**
 
   Click `Open review` on a notification
   Expected: the correct `.prs/<pr>.md` file opens
 
-- [ ] **Step 6: Verify fallback template works without opencode**
+- [x] **Step 6: Verify fallback template works without opencode**
 
   Run with `OPENCODE_BIN=/nonexistent`:
   ```bash
@@ -1206,7 +1206,7 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
   ```
   Expected: log shows fallback used, markdown written with deterministic template, notification fires
 
-- [ ] **Step 7: Verify LaunchAgent runs correctly at login**
+- [x] **Step 7: Verify LaunchAgent runs correctly at login**
 
   Log out and log back in (or use `launchctl kickstart`)
   Expected: log shows a fresh run entry at login time
@@ -1230,3 +1230,45 @@ echo "=== pr-assistant complete — ${changed_count} PR(s) with new comments ===
 - No existing LaunchAgent infrastructure — new `launchd/` directory under `pr-assistant/`.
 - Three prompt files distilled from skills: `receiving-code-review` → base prompt;
   `lima-pr-reviewer` + `socratic-reviewer-checklist` → lens-licoco; `systematic-debugging` → lens-debugging.
+- `opencode serve` default port is 4096. The TUI uses a **random port** by default unless
+  `--port` is passed. So `--attach http://localhost:4096` against the TUI always fails unless
+  the TUI was explicitly started with `--port 4096`. The correct fix is a persistent
+  `opencode serve` daemon — not starting the TUI with a fixed port.
+
+---
+
+## Chunk 9: Production Hardening (post-implementation)
+
+### Task 14: Add scheduled runs to pr-assistant LaunchAgent ✅ DONE
+
+The original plist had only `RunAtLoad: true` — it fired once at login and never again.
+`StartCalendarInterval` was added for 08:00, 13:00, and 16:00 daily.
+
+**Files changed:**
+- `launchd/com.samuel.pr-assistant.plist` — added `StartCalendarInterval` array
+
+**Verification:**
+```bash
+launchctl list | grep pr-assistant   # exit code 0, PID assigned
+```
+
+### Task 15: Add persistent opencode serve daemon ✅ DONE
+
+`opencode run --attach` was silently failing because the TUI uses a random port.
+A new launchd agent starts `opencode serve --port 4096` at login and keeps it alive.
+
+**Files added:**
+- `launchd/com.samuel.opencode-serve.plist`
+
+**Symlink:**
+```bash
+ln -sf ~/workspace/pr-assistant/launchd/com.samuel.opencode-serve.plist \
+       ~/Library/LaunchAgents/com.samuel.opencode-serve.plist
+```
+
+**Verification:**
+```bash
+curl http://localhost:4096/global/health   # {"healthy":true,"version":"1.3.13"}
+```
+
+**Log:** `~/Library/Logs/opencode-serve.log`

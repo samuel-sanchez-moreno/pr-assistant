@@ -15,6 +15,28 @@
   <key>RunAtLoad</key>
   <true/>
 
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Hour</key>
+      <integer>8</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+    <dict>
+      <key>Hour</key>
+      <integer>13</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+    <dict>
+      <key>Hour</key>
+      <integer>16</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+  </array>
+
   <key>StandardOutPath</key>
   <string>/Users/samuel.sanchez-moreno/Library/Logs/pr-assistant.log</string>
 
