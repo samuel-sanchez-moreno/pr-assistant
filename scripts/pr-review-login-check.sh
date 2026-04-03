@@ -4,7 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_FILE="$HOME/Library/Logs/pr-assistant.log"
-WORKSPACE_DIR="/Users/samuel.sanchez-moreno/workspace"
+WORKSPACE_DIR="${WORKSPACE_DIR:-$HOME/workspace}"
 
 exec >> "$LOG_FILE" 2>&1
 echo "=== pr-assistant run at $(TZ="Europe/Berlin" date +"%Y-%m-%dT%H:%M:%S %Z") ==="

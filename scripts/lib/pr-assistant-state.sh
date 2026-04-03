@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # pr-assistant-state.sh — read existing PR markdown state and compute comment deltas
 
-WORKSPACE_DIR="/Users/samuel.sanchez-moreno/workspace"
+WORKSPACE_DIR="${WORKSPACE_DIR:-$HOME/workspace}"
 
 # pr_md_path <repo> <pr_id>
 # Returns the path to the PR markdown file
