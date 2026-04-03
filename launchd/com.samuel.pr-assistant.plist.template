@@ -9,7 +9,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>/Users/samuel.sanchez-moreno/workspace/pr-assistant/scripts/pr-review-login-check.sh</string>
+    <string>__REPO_DIR__/scripts/pr-review-login-check.sh</string>
   </array>
 
   <key>RunAtLoad</key>
@@ -38,17 +38,19 @@
   </array>
 
   <key>StandardOutPath</key>
-  <string>/Users/samuel.sanchez-moreno/Library/Logs/pr-assistant.log</string>
+  <string>__HOME__/Library/Logs/pr-assistant.log</string>
 
   <key>StandardErrorPath</key>
-  <string>/Users/samuel.sanchez-moreno/Library/Logs/pr-assistant.log</string>
+  <string>__HOME__/Library/Logs/pr-assistant.log</string>
 
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
     <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     <key>HOME</key>
-    <string>/Users/samuel.sanchez-moreno</string>
+    <string>__HOME__</string>
+    <key>WORKSPACE_DIR</key>
+    <string>__WORKSPACE_DIR__</string>
   </dict>
 </dict>
 </plist>

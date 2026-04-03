@@ -6,9 +6,10 @@
   <key>Label</key>
   <string>com.samuel.opencode-serve</string>
 
+  <!-- __WORKSPACE_DIR__ is not needed by this agent — it has no repo dependency -->
   <key>ProgramArguments</key>
   <array>
-    <string>/opt/homebrew/bin/opencode</string>
+    <string>__OPENCODE_BIN__</string>
     <string>serve</string>
     <string>--port</string>
     <string>4096</string>
@@ -21,17 +22,17 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/samuel.sanchez-moreno/Library/Logs/opencode-serve.log</string>
+  <string>__HOME__/Library/Logs/opencode-serve.log</string>
 
   <key>StandardErrorPath</key>
-  <string>/Users/samuel.sanchez-moreno/Library/Logs/opencode-serve.log</string>
+  <string>__HOME__/Library/Logs/opencode-serve.log</string>
 
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
     <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     <key>HOME</key>
-    <string>/Users/samuel.sanchez-moreno</string>
+    <string>__HOME__</string>
   </dict>
 </dict>
 </plist>
